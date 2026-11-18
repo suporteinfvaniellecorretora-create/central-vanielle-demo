@@ -1,7 +1,12 @@
 
-import hmac
+import os
 import streamlit as st
 import pandas as pd
+from datetime import date
+
+# ==========================================================
+# CENTRAL VANIELLE 2.5 - DEMONSTRAÇÃO WEB
+# ==========================================================
 
 st.set_page_config(
     page_title="Central Vanielle 2.5 | Demonstração",
@@ -9,117 +14,128 @@ st.set_page_config(
     layout="wide"
 )
 
+# ==========================================================
+# CONFIGURAÇÃO DE ACESSO
+# ==========================================================
 
-# =========================================================
-# AUTENTICAÇÃO — UTILIZA SOMENTE OS SECRETS DO STREAMLIT
-# =========================================================
+def obter_credenciais():
+    try:
+        usuario = st.secrets.get("DEMO_USER", "tokio")
+        senha = st.secrets.get("DEMO_PASSWORD", "tokio18112026")
+    except Exception:
+        usuario = os.getenv("DEMO_USER", "tokio")
+        senha = os.getenv("DEMO_PASSWORD", "tokio18112026")
+
+    return usuario, senha
+
+
+DEMO_USER, DEMO_PASSWORD = obter_credenciais()
+
+
+# ==========================================================
+# TELA DE LOGIN
+# ==========================================================
 
 def login():
-    st.markdown(
-        """
-        <h1 style="color:#eaf2ff">💙 Central Vanielle 2.5</h1>
+
+    st.markdown("""
+        <h1 style="color:#eaf2ff">
+            💙 Central Vanielle 2.5
+        </h1>
         <p style="color:#9db2ce">
-        Ambiente demonstrativo • Tokio Marine
+            Ambiente demonstrativo • Tokio Marine
         </p>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
     with st.form("login"):
+
         user = st.text_input("Usuário")
         password = st.text_input("Senha", type="password")
-        ok = st.form_submit_button("Entrar", use_container_width=True)
+
+        ok = st.form_submit_button(
+            "Entrar",
+            use_container_width=True
+        )
 
     if ok:
-        try:
-            demo_user = st.secrets["DEMO_USER"]
-            demo_password = st.secrets["DEMO_PASSWORD"]
-        except Exception:
-            st.error(
-                "Configuração de acesso não encontrada. "
-                "Verifique os Secrets do Streamlit."
-            )
-            return
 
-        usuario_valido = hmac.compare_digest(
-            user.encode("utf-8"),
-            str(demo_user).encode("utf-8")
-        )
+        if user == DEMO_USER and password == DEMO_PASSWORD:
 
-        senha_valida = hmac.compare_digest(
-            password.encode("utf-8"),
-            str(demo_password).encode("utf-8")
-        )
-
-        if usuario_valido and senha_valida:
             st.session_state.authenticated = True
             st.rerun()
+
         else:
+
             st.error("Usuário ou senha inválidos.")
 
 
 if not st.session_state.get("authenticated", False):
-    st.markdown(
-        """
+
+    st.markdown("""
         <style>
         .stApp {
             background: linear-gradient(135deg,#061a33,#0b2c52);
         }
+
         [data-testid="stForm"] {
-            background:#0b2c52;
-            padding:24px;
-            border:1px solid #17416e;
-            border-radius:14px;
+            background: #0b2c52;
+            padding: 24px;
+            border: 1px solid #17416e;
+            border-radius: 14px;
         }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
+
     login()
     st.stop()
 
 
-# =========================================================
+# ==========================================================
 # IDENTIDADE VISUAL
-# =========================================================
+# ==========================================================
 
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background:#061a33;
-        color:#f1f6ff;
-    }
-    .block-container {
-        padding-top:1.5rem;
-    }
-    [data-testid="stSidebar"] {
-        background:#04152b;
-    }
-    .stMetric {
-        background:#0b2c52;
-        padding:16px;
-        border:1px solid #17416e;
-        border-radius:12px;
-    }
-    [data-testid="stDataFrame"] {
-        border:1px solid #17416e;
-        border-radius:10px;
-    }
-    h1,h2,h3 {
-        color:#f1f6ff;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<style>
+
+.stApp {
+    background: #061a33;
+    color: #f1f6ff;
+}
+
+.block-container {
+    padding-top: 1.5rem;
+}
+
+[data-testid="stSidebar"] {
+    background: #04152b;
+}
+
+.stMetric {
+    background: #0b2c52;
+    padding: 16px;
+    border: 1px solid #17416e;
+    border-radius: 12px;
+}
+
+[data-testid="stDataFrame"] {
+    border: 1px solid #17416e;
+    border-radius: 10px;
+}
+
+h1, h2, h3 {
+    color: #f1f6ff;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
-# =========================================================
-# BASE FICTÍCIA PARA DEMONSTRAÇÃO
-# =========================================================
+# ==========================================================
+# BASE DE DADOS FICTÍCIA
+# ==========================================================
 
 data = pd.DataFrame([
+
     {
         "Seguradora": "Tokio Marine",
         "Cliente": "Cliente Demonstração 01",
@@ -132,6 +148,7 @@ data = pd.DataFrame([
         "Valor": 420.50,
         "Status": "Inadimplente"
     },
+
     {
         "Seguradora": "Tokio Marine",
         "Cliente": "Cliente Demonstração 02",
@@ -144,6 +161,7 @@ data = pd.DataFrame([
         "Valor": 285.90,
         "Status": "Inadimplente"
     },
+
     {
         "Seguradora": "Tokio Marine",
         "Cliente": "Cliente Demonstração 03",
@@ -156,6 +174,7 @@ data = pd.DataFrame([
         "Valor": 610.00,
         "Status": "Em aberto"
     },
+
     {
         "Seguradora": "Tokio Marine",
         "Cliente": "Cliente Demonstração 04",
@@ -168,6 +187,7 @@ data = pd.DataFrame([
         "Valor": 198.75,
         "Status": "PAGO"
     },
+
     {
         "Seguradora": "Tokio Marine",
         "Cliente": "Cliente Demonstração 05",
@@ -180,14 +200,16 @@ data = pd.DataFrame([
         "Valor": 155.00,
         "Status": "Inadimplente"
     }
+
 ])
 
 
-# =========================================================
+# ==========================================================
 # MENU LATERAL
-# =========================================================
+# ==========================================================
 
 st.sidebar.markdown("## 💙 Central Vanielle")
+
 st.sidebar.caption("Versão demonstrativa 2.5")
 
 page = st.sidebar.radio(
@@ -205,16 +227,18 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.divider()
+
 st.sidebar.success("Ambiente de demonstração")
 
 if st.sidebar.button("Sair"):
+
     st.session_state.authenticated = False
     st.rerun()
 
 
-# =========================================================
-# CONTEÚDO
-# =========================================================
+# ==========================================================
+# CABEÇALHO
+# ==========================================================
 
 st.title(page)
 
@@ -224,6 +248,10 @@ st.caption(
 )
 
 
+# ==========================================================
+# DASHBOARD
+# ==========================================================
+
 if page == "Dashboard":
 
     overdue = data[data["Status"] == "Inadimplente"]
@@ -231,12 +259,15 @@ if page == "Dashboard":
     a, b, c, d = st.columns(4)
 
     a.metric("Clientes", len(data))
+
     b.metric("Apólices", data["Apólice"].nunique())
+
     c.metric("Parcelas inadimplentes", len(overdue))
 
-    valor = overdue["Valor"].sum()
+    valor_total = overdue["Valor"].sum()
+
     valor_formatado = (
-        f"R$ {valor:,.2f}"
+        f"R$ {valor_total:,.2f}"
         .replace(",", "X")
         .replace(".", ",")
         .replace("X", ".")
@@ -245,11 +276,23 @@ if page == "Dashboard":
     d.metric("Valor em aberto", valor_formatado)
 
     st.subheader("Resumo demonstrativo por produto")
-    st.bar_chart(data.groupby("Produto")["Valor"].sum())
+
+    st.bar_chart(
+        data.groupby("Produto")["Valor"].sum()
+    )
 
     st.subheader("Últimos registros demonstrativos")
-    st.dataframe(data, use_container_width=True, hide_index=True)
 
+    st.dataframe(
+        data,
+        use_container_width=True,
+        hide_index=True
+    )
+
+
+# ==========================================================
+# INADIMPLENTES
+# ==========================================================
 
 elif page == "Inadimplentes":
 
@@ -262,44 +305,82 @@ elif page == "Inadimplentes":
     )
 
 
+# ==========================================================
+# CLIENTES
+# ==========================================================
+
 elif page == "Clientes":
 
     st.subheader("Base demonstrativa de clientes")
 
     st.dataframe(
-        data[["Cliente", "Documento", "Telefone", "Seguradora"]],
+        data[
+            [
+                "Cliente",
+                "Documento",
+                "Telefone",
+                "Seguradora"
+            ]
+        ],
         use_container_width=True,
         hide_index=True
     )
 
+
+# ==========================================================
+# APÓLICES
+# ==========================================================
 
 elif page == "Apólices":
 
     st.subheader("Apólices demonstrativas")
 
     st.dataframe(
-        data[["Cliente", "Apólice", "Produto", "Seguradora"]],
+        data[
+            [
+                "Cliente",
+                "Apólice",
+                "Produto",
+                "Seguradora"
+            ]
+        ],
         use_container_width=True,
         hide_index=True
     )
 
+
+# ==========================================================
+# PARCELAS
+# ==========================================================
 
 elif page == "Parcelas":
 
     st.subheader("Parcelas demonstrativas")
 
     st.dataframe(
-        data[["Apólice", "Parcela", "Vencimento", "Valor", "Status"]],
+        data[
+            [
+                "Apólice",
+                "Parcela",
+                "Vencimento",
+                "Valor",
+                "Status"
+            ]
+        ],
         use_container_width=True,
         hide_index=True
     )
 
 
+# ==========================================================
+# HISTÓRICO
+# ==========================================================
+
 elif page == "Histórico":
 
     st.info(
-        "Histórico de demonstração: consulta simulada em "
-        "18/11/2026 • 5 registros fictícios apresentados."
+        "Histórico de demonstração: consulta simulada "
+        "em 18/11/2026 • 5 registros fictícios apresentados."
     )
 
     historico = pd.DataFrame([
@@ -318,6 +399,10 @@ elif page == "Histórico":
     )
 
 
+# ==========================================================
+# RELATÓRIOS
+# ==========================================================
+
 elif page == "Relatórios":
 
     st.subheader("Relatório demonstrativo")
@@ -329,7 +414,10 @@ elif page == "Relatórios":
         "text/csv"
     )
 
-    resumo = data.groupby("Status", as_index=False)["Valor"].sum()
+    resumo = data.groupby(
+        "Status",
+        as_index=False
+    )["Valor"].sum()
 
     st.dataframe(
         resumo,
@@ -337,6 +425,10 @@ elif page == "Relatórios":
         hide_index=True
     )
 
+
+# ==========================================================
+# INTEGRAÇÃO TOKIO MARINE
+# ==========================================================
 
 elif page == "Integração Tokio":
 
@@ -350,17 +442,23 @@ elif page == "Integração Tokio":
     x, y = st.columns(2)
 
     x.metric("Autenticação", "Não executada")
+
     y.metric("Consulta API", "Não executada")
 
     st.info(
         "Esta tela demonstra onde os resultados da integração "
-        "serão apresentados. Nenhuma chamada externa é realizada."
+        "serão apresentados. Nenhuma chamada externa é realizada "
+        "nesta versão."
     )
 
+
+# ==========================================================
+# RODAPÉ
+# ==========================================================
 
 st.divider()
 
 st.caption(
-    "Central Vanielle 2.5 • Demonstração para avaliação técnica • "
-    "Dados fictícios"
+    "Central Vanielle 2.5 • Demonstração para avaliação técnica "
+    "• Dados fictícios"
 )

@@ -1,4 +1,4 @@
-# Central Vanielle 2.5 — demonstração web
+﻿# Central Vanielle 2.5 — demonstração web
 
 Versão web demonstrativa independente da aplicação Windows. Usa exclusivamente dados fictícios em memória; não lê o SQLite original e não chama a API Tokio.
 
@@ -9,7 +9,7 @@ Versão web demonstrativa independente da aplicação Windows. Usa exclusivament
 
 ```toml
 DEMO_USER = "tokio"
-DEMO_PASSWORD = "defina-uma-senha-forte-aqui"
+DEMO_PASSWORD = "18112026"
 ```
 
 4. Publique e compartilhe a URL somente com o avaliador.
